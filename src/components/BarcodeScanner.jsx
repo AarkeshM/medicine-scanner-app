@@ -1,77 +1,54 @@
-import { useState, useEffect, useRef } from "react";
-import { Html5QrcodeScanner } from "html5-qrcode";
-import { FiCamera, FiSearch } from "react-icons/fi";
+import { useState } from "react";
+import BarcodeScanner from "./BarcodeScanner";
 
-export default function BarcodeScanner({ onScan }) {
-  const [barcodeInput, setBarcodeInput] = useState("");
-  const [scanActive, setScanActive] = useState(false);
-  const scannerRef = useRef(null);
+export default function MedicineScanner() {
+  const [medicineDetails, setMedicineDetails] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (scanActive) {
-      const scanner = new Html5QrcodeScanner(
-        "scanner-container",
-        { fps: 30, qrbox: 350 },
-        false
+  const handleScan = async (barcode) => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      const response = await fetch(
+        `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`
       );
-      scannerRef.current = scanner;
+      const data = await response.json();
 
-      scanner.render(
-        (text) => {
-          onScan(text);
-          setScanActive(false);
-        },
-        (err) => console.error("Scan error:", err)
-      );
-
-      return () => scanner.clear().catch(console.error);
-    }
-  }, [scanActive, onScan]);
-
-  const handleManualSearch = () => {
-    if (barcodeInput.trim()) {
-      onScan(barcodeInput.trim());
-      setBarcodeInput("");
+      if (data.items && data.items.length > 0) {
+        const product = data.items[0];
+        setMedicineDetails({
+          name: product.title,
+          brand: product.brand,
+          category: product.category,
+        });
+      } else {
+        setError("No medicine found for this barcode!");
+      }
+    } catch (err) {
+      setError("Failed to fetch data. Check internet connection.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-4">
-      {/* Camera Scanner */}
-      <div className="flex flex-col gap-2">
-        <button
-          onClick={() => setScanActive(!scanActive)}
-          className={`flex items-center justify-center gap-2 p-2 rounded-md ${
-            scanActive ? "bg-red-500 text-white" : "bg-blue-500 text-white"
-          }`}
-        >
-          <FiCamera size={18} />
-          {scanActive ? "Stop Scanner" : "Start Scanner"}
-        </button>
-        {scanActive && (
-          <div className="relative w-full h-full bg-gray-200 rounded-md overflow-hidden">
-            <div id="scanner-container" className="w-full h-full" />
-          </div>
-        )}
-      </div>
-
-      {/* Manual Input */}
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Enter barcode manually"
-          className="flex-1 p-2 border rounded-md"
-          value={barcodeInput}
-          onChange={(e) => setBarcodeInput(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleManualSearch()}
-        />
-        <button
-          onClick={handleManualSearch}
-          className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600"
-        >
-          <FiSearch size={18} />
-        </button>
-      </div>
+    <div className="p-4 max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Medicine Scanner</h1>
+      
+      <BarcodeScanner onScan={handleScan} />
+      
+      {loading && <p className="text-blue-500">Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      
+      {medicineDetails && (
+        <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+          <h3 className="text-xl font-bold">{medicineDetails.name}</h3>
+          <p>Brand: {medicineDetails.brand || "N/A"}</p>
+          <p>Category: {medicineDetails.category || "N/A"}</p>
+        </div>
+      )}
     </div>
   );
 }
