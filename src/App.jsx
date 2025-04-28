@@ -802,7 +802,6 @@ export default function App() {
         "manufacturing_date": "2025-07-28",
         "expiry": "2027-07-28"
       },
-
       "456789012345": {
         "name": "Aspirin",
         "description": "Anti-inflammatory and pain reliever",
@@ -848,8 +847,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
+    <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: `url('\Gal-Picsart-AiImageEnhancer.jpg')` }}>
       <header className="bg-blue-600 text-white p-4 shadow-md">
         <h1 className="text-2xl font-bold">Medicine Scanner</h1>
       </header>
