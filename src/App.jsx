@@ -831,83 +831,83 @@ export default function App() {
         "expiry": "2027-07-20"
       },
     };
-  const fetchMedicineDetails = (barcode) => {
-    const foundMedicine = mockData[barcode];
-    if (foundMedicine) {
-      setMedicine({
-        name: foundMedicine.name,
-        description: foundMedicine.description,
-        dosage: foundMedicine.dosage,
-        manufacturer: foundMedicine.manufacturer,
-        expiry: foundMedicine.expiry,
-      });
-    } else {
-      setMedicine({ 
-        error: "Medicine not found!", 
-        showCallOption: true 
-      });
-    }
-  };
 
-  return (
-    <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: `url('/Gal-Picsart-AiImageEnhancer.jpg')` }}>
-      {/* Header */}
-      <header className="bg-blue-600 text-white p-4 shadow-md">
-        <h1 className="text-2xl font-bold">Medicine Scanner</h1>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto p-4">
-        <div className="grid md:grid-cols-2 gap-6">
-          
-          {/* Scanner Section */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4">Scan Barcode</h2>
-            <BarcodeScanner onScan={fetchMedicineDetails} />
-          </div>
-
-          {/* Medicine Details Section */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4">Medicine Details</h2>
-            {medicine ? (
-              medicine.error ? (
-                <div className="flex flex-col items-center text-center">
-                  <p className="text-red-500 font-semibold">{medicine.error}</p>
-                  {medicine.showCallOption && (
-                    <a 
-                      href="tel:1800114000" 
-                      className="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
-                    >
-                      Call Now
-                    </a>
-                  )}
-                </div>
+    
+      const foundMedicine = mockData[barcode];
+      if (foundMedicine) {
+        setMedicine({
+          name: foundMedicine.name,
+          description: foundMedicine.description,
+          dosage: foundMedicine.dosage,
+          manufacturer: foundMedicine.manufacturer,
+          expiry: foundMedicine.expiry,
+        });
+      } else {
+        setMedicine({ 
+          error: "Medicine not found!", 
+          showCallOption: true 
+        });
+      }
+    };
+  
+    return (
+      <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: `url('/Gal-Picsart-AiImageEnhancer.jpg')` }}>
+        {/* Header */}
+        <header className="bg-blue-600 text-white p-4 shadow-md">
+          <h1 className="text-2xl font-bold">Medicine Scanner</h1>
+        </header>
+  
+        {/* Main Content */}
+        <main className="container mx-auto p-4">
+          <div className="grid md:grid-cols-2 gap-6">
+            
+            {/* Scanner Section */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold mb-4">Scan Barcode</h2>
+              <BarcodeScanner onScan={fetchMedicineDetails} />
+            </div>
+  
+            {/* Medicine Details Section */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold mb-4">Medicine Details</h2>
+              {medicine ? (
+                medicine.error ? (
+                  <div className="flex flex-col items-center text-center">
+                    <p className="text-red-500 font-semibold">{medicine.error}</p>
+                    {medicine.showCallOption && (
+                      <a 
+                        href="tel:1800114000" 
+                        className="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+                      >
+                        Call Now
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <MedicineDetails data={medicine} />
+                )
               ) : (
-                <MedicineDetails data={medicine} />
-              )
-            ) : (
-              <p className="text-gray-500">Scan a barcode to see details.</p>
-            )}
+                <p className="text-gray-500">Scan a barcode to see details.</p>
+              )}
+            </div>
+  
           </div>
-
-        </div>
-      </main>
-
-      {/* Chatbot Toggle Button */}
-      <button
-        onClick={() => setShowChatbot(!showChatbot)}
-        className="fixed bottom-6 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition"
-      >
-        {showChatbot ? <FiX size={24} /> : <FiMessageSquare size={24} />}
-      </button>
-
-      {/* Chatbot Popup */}
-      {showChatbot && (
-        <div className="fixed bottom-20 right-6 w-80 bg-white rounded-lg shadow-xl border border-gray-200">
-          <Chatbot />
-        </div>
-      )}
-    </div>
-  );
+        </main>
+  
+        {/* Chatbot Toggle Button */}
+        <button
+          onClick={() => setShowChatbot(!showChatbot)}
+          className="fixed bottom-6 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition"
+        >
+          {showChatbot ? <FiX size={24} /> : <FiMessageSquare size={24} />}
+        </button>
+  
+        {/* Chatbot Popup */}
+        {showChatbot && (
+          <div className="fixed bottom-20 right-6 w-80 bg-white rounded-lg shadow-xl border border-gray-200">
+            <Chatbot />
+          </div>
+        )}
+      </div>
+    );
   }
-}
